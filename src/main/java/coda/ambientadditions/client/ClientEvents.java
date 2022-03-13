@@ -11,7 +11,11 @@ import coda.ambientadditions.client.renderer.layer.ScarletHoneycreeperShoulderLa
 import coda.ambientadditions.client.renderer.layer.PembrokeCorgiCollarLayer;
 import coda.ambientadditions.common.entities.*;
 import coda.ambientadditions.common.init.AAEntities;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +27,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -82,7 +87,7 @@ public class ClientEvents {
             return model;
         }));
 
-        EntityRenderers.register(AAEntities.HARLEQUIN_SHRIMP.get(), (ctx) -> new GenericGeoRenderer(ctx, () -> {
+        EntityRenderers.register(AAEntities.HARLEQUIN_SHRIMP.get(), (ctx) -> new GenericGeoRenderer<HarlequinShrimpEntity>(ctx, () -> {
             TextureVariantModel<HarlequinShrimpEntity> model = new TextureVariantModel<>(AAEntities.HARLEQUIN_SHRIMP.get().getRegistryName().getPath());
             model.setTextures(HarlequinShrimpEntity::getVariant, Arrays.asList(
                     new ResourceLocation(AmbientAdditions.MOD_ID, "textures/entity/harlequin_shrimp/pink.png"),
@@ -90,7 +95,12 @@ public class ClientEvents {
                     new ResourceLocation(AmbientAdditions.MOD_ID, "textures/entity/harlequin_shrimp/blue.png")
                     ));
             return model;
-        }));
+        }){
+            @Override
+            public RenderType getRenderType(HarlequinShrimpEntity animatable, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
+                return RenderType.entityTranslucent(textureLocation);
+            }
+        });
 
         EntityRenderers.register(AAEntities.MOLE.get(), (ctx) -> new GenericGeoRenderer(ctx, () -> {
             TextureVariantModel<MoleEntity> model = new TextureVariantModel<>("star_nosed_mole");
